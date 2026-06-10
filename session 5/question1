@@ -1,0 +1,8 @@
+SELECT
+    7 AS month,
+    COUNT(DISTINCT j.user_id) AS monthly_active_users
+FROM user_actions j
+JOIN user_actions p
+    ON j.user_id = p.user_id
+WHERE DATE_TRUNC('month', j.event_date) = DATE '2022-07-01'
+  AND DATE_TRUNC('month', p.event_date) = DATE '2022-06-01';
