@@ -1,0 +1,23 @@
+WITH freq AS (
+    SELECT
+        searches,
+        num_users,
+        SUM(num_users) OVER (ORDER BY searches) AS cum_users,
+        SUM(num_users) OVER () AS total_users
+    FROM search_frequency
+),
+positions AS (
+    SELECT
+        searches,
+        num_users,
+        cum_users,
+        total_users,
+        cum_users - num_users + 1 AS start_pos
+    FROM freq
+)
+SELECT ROUND(AVG(searches)::numeric, 1) AS median
+FROM positions
+WHERE
+    FLOOR((total_users + 1) / 2.0) BETWEEN start_pos AND cum_users
+    OR
+    CEIL((total_users + 1) / 2.0) BETWEEN start_pos AND cum_users;
